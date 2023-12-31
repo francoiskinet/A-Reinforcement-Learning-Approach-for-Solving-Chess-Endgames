@@ -1,5 +1,5 @@
 import sys
-from src.Pieces import King, Rook, Piece
+from Pieces import King, Rook, Piece
 import random
 import copy
 

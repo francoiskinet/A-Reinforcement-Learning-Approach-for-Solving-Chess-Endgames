@@ -2,3 +2,4 @@
 src/res/*
 src/*.pyc
 src/__pycache__/
+.vscode/launch.json

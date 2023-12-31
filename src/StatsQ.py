@@ -11,11 +11,11 @@ if __name__ == '__main__':
 
     games_to_play = 1000
 
-    base_memory = 'res/memory1-0.bson'
+    base_memory = 'src/res/memory1-0.bson'
     fp = base_memory.split('.')[0] + '_Q_trained_ep' + str(epoch) + '_g' + str(int(gamma * 100)) + \
                '_l' + str(int(learning_rate * 10)) + '_e' + str(int(eps * 100)) + '.bson'
 
-    play = Play(fp, False)
+    play = Play(fp, True)
     wins, rounds = play.play_stats(games_to_play)
 
     print('Win perc:', wins,'Average Rounds:', rounds)

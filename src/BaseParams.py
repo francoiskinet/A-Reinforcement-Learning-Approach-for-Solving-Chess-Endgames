@@ -35,7 +35,7 @@ class BoardPossitionParams(BaseParams):
                         for bk_r in range(0,8):
                             for bk_c in range(0,8):
                                 for white_plays in range(0,2):
-                                    if(wr_r == -1 and wr_c != -1 or wr_r!=-1 and wr_c == -1) :
+                                    if(wr_r == -1 and wr_c != -1 or wr_r != -1 and wr_c == -1) :
                                         continue
                                     params.append((wk_r, wk_c, wr_r, wr_c, bk_r, bk_c,white_plays))
         return params
@@ -94,7 +94,7 @@ class BoardPossitionParams(BaseParams):
 class BoardPossitionParamsKB(BaseParams):
     """
     The purpose of this class is to build and save all the possible states
-    of the chessboard with two kings and a rook
+    of the chessboard with two kings and two bishops
     """
     def get_all_params(self):
         params = []
@@ -231,10 +231,11 @@ class BoardPossitionTDParamsKB(BaseParams):
 
 if __name__ == '__main__':
 
-    bp = BoardPossitionParams()
-    par = bp.get_possible_nxt_prms()
-    bp.save(par, 'res/memory1-0.bson')
-    # bpb = BoardPossitionTDParamsKB()
-    # par = bpb.get_all_params()
-    # bpb.save(par, 'resTD_BK/memory1-0.bson')
 
+    # print(BoardPossitionParams().get_all_params())
+    # bp = BoardPossitionParams()
+    # par = bp.get_possible_nxt_prms()
+    # bp.save(par, 'src/res/memory1-0.bson')
+    bpb = BoardPossitionTDParamsKB()
+    par = bpb.get_all_params()
+    bpb.save(par, 'src/res/memory1-0-TDBK.bson')

@@ -1,5 +1,5 @@
 import random
-from BaseParams import BoardPossitionParams
+from BaseParams import BoardPossitionParams, BoardPossitionTDParamsKB
 import time
 
 
@@ -125,8 +125,9 @@ class QLearning:
 
 
 if __name__ == '__main__':
-    bp = BoardPossitionParams()
-    q = QLearning(bp, gamma=0.99, learning_rate=0.8, epochs=1000000, eps=0.9, name='res/memory1-0.bson')
+    kings_rook = BoardPossitionParams()
+    kings_bishops = BoardPossitionTDParamsKB()
+    q = QLearning(kings_bishops, gamma=0.99, learning_rate=0.8, epochs=1000000, eps=0.9, name='src/res/memory1-0-TDBK.bson')
 
     last = time.time()
     ttime = q.learning()

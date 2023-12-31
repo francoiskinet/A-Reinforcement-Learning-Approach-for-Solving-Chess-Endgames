@@ -1,8 +1,11 @@
+import sys
+sys.path.append(r"c:\Users\franc\OneDrive\projects\git\A-Reinforcement-Learning-Approach-for-Solving-Chess-Endgames\src")
+
 import cocos
 import random
 import pickle
 from cocos.director import director
-from src.Cheesboard import ChessBoard,King,Rook,Piece
+from Cheesboard import ChessBoard,King,Rook,Piece
 
 
 class Game(cocos.layer.Layer):
@@ -31,17 +34,17 @@ class Game(cocos.layer.Layer):
         self.add(label,z=4)
 
 
-        self.wking = cocos.sprite.Sprite('GUI/wking.gif')
+        self.wking = cocos.sprite.Sprite('wking.gif')
         self.wking.position = self.convert_pos(0,0)
         self.wking.scale = 0.1
         self.add(self.wking, z=1)
 
-        self.wrook = cocos.sprite.Sprite('GUI/wrook.gif')
+        self.wrook = cocos.sprite.Sprite('wrook.gif')
         self.wrook.position = self.convert_pos(0,2)
         self.wrook.scale = 0.1
         self.add(self.wrook, z=2)
 
-        self.bking = cocos.sprite.Sprite('GUI/bking.gif')
+        self.bking = cocos.sprite.Sprite('bking.gif')
         self.bking.position = self.convert_pos(5,4)
         self.bking.scale = 0.1
         self.add(self.bking, z=3)
@@ -215,7 +218,7 @@ class Game(cocos.layer.Layer):
             return params
 
 if __name__ == '__main__':
-    fp = '../res/memory1-0.bson'
+    fp = 'src/res/memory1-0.bson'
 
     director.init(width=64*8, height=64*9, caption="Chess Game Engine",resizable=False)
     director.run(cocos.scene.Scene(Game(fp)))
