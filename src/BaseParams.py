@@ -3,6 +3,7 @@ from CheesboardKB import ChessBoardKB
 from Pieces import *
 import pickle
 
+FILE_PATH = r"c:/LocalProject/A-Reinforcement-Learning-Approach-for-Solving-Chess-Endgames/resources/"
 
 class BaseParams:
 
@@ -238,4 +239,4 @@ if __name__ == '__main__':
     # bp.save(par, 'src/res/memory1-0.bson')
     bpb = BoardPossitionTDParamsKB()
     par = bpb.get_all_params()
-    bpb.save(par, 'src/res/memory1-0-TDBK.bson')
+    bpb.save(par, FILE_PATH + 'memory1-0-TDBK.bson')
