@@ -77,11 +77,11 @@ class Game(cocos.layer.Layer):
         self.play()
 
     def on_key_press(self, key, modifiers):
-        if self.finish is 1:
+        if self.finish == 1:
             return
         print('Continue:', key)
         self.butt += 1
-        if self.butt is 1:
+        if self.butt == 1:
             self.current_state_id = self.next_state_id
             self.set_position(self.current_state_id)
         else:
@@ -90,7 +90,7 @@ class Game(cocos.layer.Layer):
             self.play()
 
     def play(self):
-        if self.current_state_id[6] is 1:
+        if self.current_state_id[6] == 1:
             self.board.turn += 1
             self.round.element.text = str(self.board.turn)
             self.who_plays.element.text = 'WHITE'
@@ -99,14 +99,14 @@ class Game(cocos.layer.Layer):
 
         next_states = self.R[self.current_state_id]
 
-        if self.current_state_id[6] is 0:
+        if self.current_state_id[6] == 0:
             self.next_state_id = self.get_min_state(next_states)
         else:
             self.next_state_id  = self.get_max_state(next_states)
 
         board = self.get_board(self.current_state_id)
 
-        if board.state is ChessBoard.BLACK_KING_CHECKMATE or self.board.turn>40:
+        if board.state == ChessBoard.BLACK_KING_CHECKMATE or self.board.turn>40:
             self.set_position(self.current_state_id)
             self.bking.z = 0
             self.finish = 1
@@ -115,7 +115,7 @@ class Game(cocos.layer.Layer):
             self.add(box,z = 3)
 
             print("Self State:", board.state)
-            if board.state is self.board.BLACK_KING_CHECKMATE:
+            if board.state == self.board.BLACK_KING_CHECKMATE:
                 label = cocos.text.Label('CHECKMATE',
                               font_name='Comic Sans MS',
                               font_size=52,
@@ -132,6 +132,7 @@ class Game(cocos.layer.Layer):
             self.add(label,z=4)
 
             return
+        
         for i in next_states:
             print (i,'->', next_states[i])
         print('MaxMin:',  self.next_state_id ,'->',next_states[self.next_state_id ])
@@ -218,7 +219,7 @@ class Game(cocos.layer.Layer):
             return params
 
 if __name__ == '__main__':
-    fp = 'src/res/memory1-0.bson'
+    fp = 'src/res/memory1-0_Q_trained_ep1000000_g99_l8_e90.bson'
 
     director.init(width=64*8, height=64*9, caption="Chess Game Engine",resizable=False)
     director.run(cocos.scene.Scene(Game(fp)))

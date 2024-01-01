@@ -224,33 +224,33 @@ class Bishop(Piece):
         """
         :return: The possible moves
         """
-        line1 = []
+        diag1 = []
         for k in range(1, 8):
-            if king is not None and (self.row - k, self.col - k) == (king.row, king.col):
-                line1.clear()
-            else:
-                line1.append((self.row - k, self.col - k))
-
-        for k in range(1, 8):
-            if king is not None and (self.row + k, self.col + k) == (king.row, king.col):
+            if (king is not None and (self.row - k, self.col - k) == (king.row, king.col)) or (self.row - k < 0) or (self.col - k < 0):
                 break
             else:
-                line1.append((self.row + k, self.col + k))
-
-        line2 = []
-        for k in range(1, 8):
-            if king is not None and (self.row - k, self.col + k) == (king.row, king.col):
-                line2.clear()
-            else:
-                line2.append((self.row - k, self.col + k))
+                diag1.append((self.row - k, self.col - k)) 
 
         for k in range(1, 8):
-            if king is not None and (self.row + k, self.col - k) == (king.row, king.col):
+            if (king is not None and (self.row + k, self.col + k) == (king.row, king.col))  or (self.row + k >= 8) or (self.col + k >= 8 ):
                 break
             else:
-                line2.append((self.row + k, self.col - k))
+                diag1.append((self.row + k, self.col + k))
 
-        return list(set(line1) | set(line2))
+        diag2 = []
+        for k in range(1, 8):
+            if (king is not None and (self.row - k, self.col + k) == (king.row, king.col))  or (self.row - k < 0) or (self.col + k >= 8):
+                break
+            else:
+                diag2.append((self.row - k, self.col + k))
+
+        for k in range(1, 8):
+            if (king is not None and (self.row + k, self.col - k) == (king.row, king.col))  or (self.row + k >= 8) or (self.col - k < 0):
+                break
+            else:
+                diag2.append((self.row + k, self.col - k))
+
+        return list(set(diag1) | set(diag2))
 
 
 class BlackBishop(Bishop):
@@ -262,13 +262,11 @@ class WhiteBishop(Bishop):
 
 if __name__ == '__main__':
     print("King")
-    k = King(3,3, Piece.WHITE)
+    k = King(4, 3, Piece.BLACK)
     print(k.possible_moves())
-    # k.move(3,2)
-    # print(k)
-    # print("Rook")
-    # r = Rook(3,3)
-    # print(r)
-    # r.move(3,7)
-    # print(r)
-
+    print("Rook")
+    r = Rook(0, 0, Piece.WHITE)
+    print(r.possible_moves(k))
+    print("Bishop")
+    b = Bishop(3 , 2, Piece.WHITE)
+    print(b.possible_moves(k))
