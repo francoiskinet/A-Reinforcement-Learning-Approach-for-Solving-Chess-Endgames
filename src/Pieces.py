@@ -177,6 +177,8 @@ class Rook(Piece):
         return lis
 
     def check_move_validity(self, piece, row, col):
+        if row != self.row and col != self.col:
+            return False
         if row == piece.row and col == piece.col:
             return False
         if col < piece.col and col < self.col and  self.col > piece.col and piece.row == self.row:
@@ -204,6 +206,7 @@ class Bishop(Piece):
             self.row = d_row
             return True
         return False
+    
 
     def check_pos(self, d_row, d_col):
         """
@@ -219,6 +222,22 @@ class Bishop(Piece):
         :return: The restricted positions
         """
         return self.possible_moves(king)
+    
+    def is_in_diags(self, d_row, d_col):
+        """
+        Check if the desired position is in piece diagonals
+        :return: True if it is the case
+                 False otherwise
+        """
+        all_diags = []
+        for k in range(0,8):
+            all_diags.append((self.row + k, self.col + k))
+            all_diags.append((self.row - k, self.col - k))
+            all_diags.append((self.row + k, self.col - k))
+            all_diags.append((self.row - k, self.col + k))
+        if (d_row, d_col) in all_diags:
+            return True
+        return False
 
     def possible_moves(self, king=None):
         """
@@ -251,6 +270,22 @@ class Bishop(Piece):
                 diag2.append((self.row + k, self.col - k))
 
         return list(set(diag1) | set(diag2))
+    
+    def check_move_validity(self, piece, row, col):
+        if row == piece.row and col == piece.col:
+            return False
+        if not self.is_in_diags(row, col):
+            return False
+        piece_on_diag = self.is_in_diags(piece.row, piece.col) 
+        if piece_on_diag and row > self.row and col > self.col and row > piece.row and col > self.col and piece.row > self.row and piece.col > self.col:
+            return False 
+        elif piece_on_diag and row < self.row and col < self.col and row < piece.row and col < self.col and piece.row < self.row and piece.col < self.col:
+            return False 
+        elif piece_on_diag and row > self.row and col < self.col and row > piece.row and col < self.col and piece.row > self.row and piece.col < self.col:
+            return False 
+        elif piece_on_diag and row < self.row and col > self.col and row < piece.row and col > self.col and piece.row < self.row and piece.col > self.col:
+            return False 
+        return True
 
 
 class BlackBishop(Bishop):
@@ -260,13 +295,74 @@ class BlackBishop(Bishop):
 class WhiteBishop(Bishop):
     pass
 
+class Queen(Piece):
+    def check_pos(self, d_row, d_col):
+        return (d_row, d_col) in self.possible_moves()
+    
+    def is_in_diags(self, d_row, d_col):
+        """
+        Check if the desired position is in piece diagonals
+        :return: True if it is the case
+                 False otherwise
+        """
+        all_diags = []
+        for k in range(0,8):
+            all_diags.append((self.row + k, self.col + k))
+            all_diags.append((self.row - k, self.col - k))
+            all_diags.append((self.row + k, self.col - k))
+            all_diags.append((self.row - k, self.col + k))
+        if (d_row, d_col) in all_diags:
+            return True
+        return False
+
+    def possible_moves(self, king=None):
+        diags = Bishop.possible_moves(self, king)
+        lines = Rook.possible_moves(self, king)
+        return list(set(diags) | set(lines))
+    
+    def restricted_positions(self, king=None):
+        lis = self.possible_moves(king)
+        lis.append((self.row, self.col))
+        return lis
+    
+    def check_move_validity(self, piece, row, col):
+        return (Rook.check_move_validity(self, piece, row, col) or Bishop.check_move_validity(self, piece, row, col))
+
+
+
+
+def comparison(list1, list2):
+    if len(list1) != len(list2):
+        return False
+    for x in list1:
+        if x not in list2:
+            return False
+    return True
+
 if __name__ == '__main__':
-    print("King")
-    k = King(4, 3, Piece.BLACK)
-    print(k.possible_moves())
-    print("Rook")
-    r = Rook(0, 0, Piece.WHITE)
-    print(r.possible_moves(k))
-    print("Bishop")
-    b = Bishop(3 , 2, Piece.WHITE)
-    print(b.possible_moves(k))
+    # print("King")
+    # k = King(6,3, Piece.BLACK)
+    # print(k.possible_moves())
+    # print("Rook")
+    # r = Rook(5,2, Piece.WHITE)
+    # r_moves = r.possible_moves(k) 
+    # print(r_moves)
+    # print("Bishop")
+    # b = Bishop(5,2, Piece.WHITE)
+    # b_moves = b.possible_moves(k)
+    # print(b_moves)
+    # print("Queen")
+    # q = Queen(5,2, Piece.WHITE)
+    # q_moves = q.possible_moves(k)
+    # print(q_moves)
+
+    # print(comparison(r_moves + b_moves, q_moves))
+
+    b = Bishop(3,3, Piece.WHITE)
+    r = Rook(3,3,Piece.WHITE)
+    q = Queen(3,3,Piece.WHITE)
+    piece = King(5,5, Piece.WHITE)
+    x,y = 6,6
+    print(f"Queen : {q.check_move_validity(piece,x,y)}")
+    print(f"Bishop : {b.check_move_validity(piece,x,y)}")
+    print(f"Rook : {r.check_move_validity(piece,x,y)}")
