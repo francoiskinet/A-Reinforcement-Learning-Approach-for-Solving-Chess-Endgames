@@ -2,20 +2,22 @@ import os.path
 from BaseParams import BoardPossitionParams, FILE_PATH
 import pickle
 import random
-from Cheesboard import ChessBoard, King, Rook, Piece
+from Cheesboard import ChessBoard, King, Rook, Queen, Piece
 
 
 class Play:
-    def __init__(self, file_name, debug=None):
+    def __init__(self, file_name, debug=None, WPiece = Rook):
         self.file_name = file_name
         self.R = self.load(file_name)
         self.debug = debug
+        self.WPiece = WPiece
+        print(self.WPiece)
 
     def play_stats(self, games_to_play):
         wins = 0
         turns = 0
         for i in range(0, games_to_play):
-            win, turn = self.play()
+            win, turn = self.play(self.WPiece)
             if win:
                 wins += 1
                 turns += turn
@@ -35,8 +37,7 @@ class Play:
             current_state_id = state_id
 
         while True:
-
-            board = get_board(current_state_id)
+            board = get_board(current_state_id, self.WPiece)
 
             if current_state_id[6] is 1:
                 turn += 1
@@ -47,10 +48,10 @@ class Play:
             next_states = self.R[current_state_id]
 
             if not next_states:
-                board = get_board(state_id=current_state_id)
+                board = get_board(state_id=current_state_id, WPiece = self.WPiece)
 
                 if self.debug:
-                    board.draw()
+                    board.draw(self.WPiece)
 
                 if board.state == ChessBoard.BLACK_KING_CHECKMATE:
                     win = True
@@ -108,10 +109,10 @@ class Play:
             return params
 
 
-def get_board(state_id):
+def get_board(state_id, WPiece):
     wk_r, wk_c, wr_r, wr_c, bk_r, bk_c, white_plays = state_id
     return ChessBoard(wk=King(wk_r, wk_c, Piece.WHITE),
-                      wr=Rook(wr_r, wr_c, Piece.WHITE),
+                      wr=WPiece(wr_r, wr_c, Piece.WHITE),
                       bk=King(bk_r, bk_c, Piece.BLACK),
                       white_plays=white_plays,
                       debug=True
@@ -119,7 +120,7 @@ def get_board(state_id):
 
 
 if __name__ == '__main__':
-    p = Play(FILE_PATH + 'memory1-0_Q_trained_ep1000000_g99_l8_e90.bson', True)
+    p = Play(FILE_PATH + '/memory1-0-KQ_Q_trained_ep1000000_g99_l8_e90.bson', True, Queen)
     #wins, turns = p.play_stats(1)
     wins, turns = p.play((7,1,6,6,4,5,0))
     print(wins, turns)

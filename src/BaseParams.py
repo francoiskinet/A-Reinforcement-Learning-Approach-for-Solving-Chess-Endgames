@@ -91,6 +91,77 @@ class BoardPossitionParams(BaseParams):
         with open(filename, 'rb') as infile:
             params = pickle.load(infile)
             return params
+        
+class BoardPossitionParamsKQ(BaseParams):
+    """
+    The purpose of this class is to build and save all the possible states
+    of the chessboard with two kings and a Queen
+    """
+    def get_all_params(self):
+        params = []
+        for wk_r in range(0,8):
+            for wk_c in range(0,8):
+                for wq_r in range(-1,8):
+                    for wq_c in range(-1,8):
+                        for bk_r in range(0,8):
+                            for bk_c in range(0,8):
+                                for white_plays in range(0,2):
+                                    if(wq_r == -1 and wq_c != -1 or wq_r != -1 and wq_c == -1) :
+                                        continue
+                                    params.append((wk_r, wk_c, wq_r, wq_c, bk_r, bk_c,white_plays))
+        return params
+
+    def get_possible_nxt_prms(self, params=None):
+        if params is None:
+            params = self.get_all_params()
+
+        count = 0
+        nxt_prms = {}
+        for wk_r, wk_c, wq_r, wq_c, bk_r, bk_c,white_plays in params:
+
+            board = ChessBoard(wk=King(wk_r, wk_c, Piece.WHITE),
+                               wr=Queen(wq_r, wq_c, Piece.WHITE),
+                               bk=King(bk_r, bk_c, Piece.BLACK),
+                               white_plays=white_plays)
+            if not board.valid:
+                continue
+
+            nxt_pos = {}
+            for nxt_moves in board.get_possible_moves():
+                r = -1
+                if nxt_moves.state == ChessBoard.BLACK_KING_CHECKMATE:
+                    r = 1
+                elif nxt_moves.state == ChessBoard.DRAW:
+                    r = 0
+                nxt_pos[nxt_moves.board_id()] = r
+
+            nxt_prms[(wk_r,wk_c,wq_r,wq_c,bk_r,bk_c,white_plays)] = nxt_pos
+
+            count += 1
+            if count % 1000 == 0:
+                print (count)
+
+        return nxt_prms
+    
+    def save(self, parms, filename):
+        """
+        :param params: The data to save
+        :param filename: The name of the file
+        :return: None
+        """
+        with open(filename, 'wb') as outfile:
+            pickle.dump(parms, outfile, pickle.HIGHEST_PROTOCOL)
+
+    def load(self, filename):
+        """
+        Load parameters
+        :param filename: The name of the file
+        :return: Parameters
+        """
+        with open(filename, 'rb') as infile:
+            params = pickle.load(infile)
+            return params
+        
 
 class BoardPossitionParamsKB(BaseParams):
     """
@@ -237,6 +308,9 @@ if __name__ == '__main__':
     # bp = BoardPossitionParams()
     # par = bp.get_possible_nxt_prms()
     # bp.save(par, 'src/res/memory1-0.bson')
-    bpb = BoardPossitionTDParamsKB()
-    par = bpb.get_all_params()
-    bpb.save(par, FILE_PATH + 'memory1-0-TDBK.bson')
+    # bpb = BoardPossitionTDParamsKB()
+    # par = bpb.get_all_params()
+    # bpb.save(par, FILE_PATH + 'memory1-0-TDBK.bson')
+    bp = BoardPossitionParamsKQ()
+    par = bp.get_possible_nxt_prms()
+    bp.save(par, FILE_PATH + 'memory1-0-KQ.bson')

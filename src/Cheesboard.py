@@ -1,5 +1,5 @@
 import sys
-from Pieces import King, Rook, Piece
+from Pieces import King, Rook, Queen, Bishop, Piece
 import random
 import copy
 
@@ -19,6 +19,7 @@ class ChessBoard:
         self.state = ChessBoard.NOTHING
         self.debug = debug
         self.valid = True
+        self.wr_class = type(wr)
 
         if (wk is None or wr is None or bk is None):
             return
@@ -31,22 +32,22 @@ class ChessBoard:
         all_added.append(self.add_piece(bk))
 
         if all(all_added):
-            self.update_state()
+            self.update_state(self.wr_class)
         else:
             self.valid = False
 
             # if self.state == ChessBoard.BLACK_KING_CHECKED:
             #    self.valid = False
 
-    def board_id(self):
+    def board_id(self, WPiece):
         b_king = self.get_b_king()
         w_king = self.get_w_king()
-        w_rook = self.get_w_rook()
+        w_piece = self.get_w_piece(WPiece)
         x,y = 0,0
-        if w_rook is None:
+        if w_piece is None:
             x , y = -1, -1
         else:
-            x , y = w_rook.row,w_rook.col
+            x , y = w_piece.row,w_piece.col
 
         return (w_king.row, w_king.col, x, y, b_king.row, b_king.col,self.turn)
 
@@ -86,18 +87,18 @@ class ChessBoard:
                 return p
         return None
 
-    def get_w_rook(self):
+    def get_w_piece(self, WPiece):
         for p in self.pieces:
-            if type(p) is Rook and p.color == Piece.WHITE:
+            if type(p) is WPiece and p.color == Piece.WHITE:
                 return p
         return None
 
-    def play_move(self, row, col, piece):
+    def play_move(self, row, col, piece, WPiece):
 
         if self.state == ChessBoard.DRAW:
             return True
         w_king = self.get_w_king()
-        w_rook = self.get_w_rook()
+        w_piece = self.get_w_piece(WPiece)
         b_king = self.get_b_king()
 
         if not piece.check_borders(row, col) or not piece.check_pos(row, col):
@@ -106,23 +107,23 @@ class ChessBoard:
         if w_king is piece:
 
             res = b_king.restricted_positions()
-            res.append((w_rook.row, w_rook.col))
+            res.append((w_piece.row, w_piece.col))
             if self.turn is Piece.BLACK or (row, col) in res:
                 return False
 
-        elif w_rook is piece:
+        elif w_piece is piece:
             if self.turn is Piece.BLACK or not piece.check_move_validity(w_king, row, col):
                 return False
 
         elif b_king is piece:
-            res_wrook = set(w_rook.restricted_positions(w_king))
-            res_wrook.remove((w_rook.row,w_rook.col))
+            res_wpiece = set(w_piece.restricted_positions(w_king))
+            res_wpiece.remove((w_piece.row,w_piece.col))
             res_wking = set(w_king.restricted_positions())
-            res = res_wrook | res_wking
+            res = res_wpiece | res_wking
             res.add((w_king.row, w_king.col))
 
-            if w_rook.row is row and w_rook.col is col:
-                self.pieces.remove(w_rook)
+            if w_piece.row is row and w_piece.col is col:
+                self.pieces.remove(w_piece)
 
             if self.turn is Piece.WHITE or (row, col) in res:
                 return False
@@ -135,13 +136,13 @@ class ChessBoard:
 
         return False
 
-    def get_possible_moves(self):
+    def get_possible_moves(self, WPiece):
         pieces_to_play = []
         if self.state is ChessBoard.DRAW or self.state is ChessBoard.BLACK_KING_CHECKMATE or not self.valid:
             return []
 
         if self.turn == Piece.WHITE:
-            pieces_to_play = [self.get_w_king(), self.get_w_rook()]
+            pieces_to_play = [self.get_w_king(), self.get_w_piece(WPiece)]
         else:
             pieces_to_play = [self.get_b_king()]
 
@@ -150,7 +151,7 @@ class ChessBoard:
         for piece in pieces_to_play:
 
             moves = []
-            if type(piece) is Rook:
+            if type(piece) is WPiece:
                 piece_num = 1
                 moves = piece.possible_moves(self.get_w_king())
             else:
@@ -167,7 +168,7 @@ class ChessBoard:
                 if piece_num is 0:
                     clone_piece = new_board.get_w_king()
                 elif piece_num is 1:
-                    clone_piece = new_board.get_w_rook()
+                    clone_piece = new_board.get_w_piece(WPiece)
                 else:
                     clone_piece = new_board.get_b_king()
 
@@ -176,7 +177,7 @@ class ChessBoard:
 
         return boards
 
-    def update_state(self):
+    def update_state(self, WPiece):
         kw = None
         kb = None
         rw = None
@@ -185,7 +186,7 @@ class ChessBoard:
                 kw = p
             if type(p) is King and p.color is Piece.BLACK:
                 kb = p
-            if type(p) is Rook and p.color is Piece.WHITE:
+            if type(p) is WPiece and p.color is Piece.WHITE:
                 rw = p
 
         if rw is None:
@@ -219,14 +220,14 @@ class ChessBoard:
         return False
 
     @staticmethod
-    def get_random_chessboard():
+    def get_random_chessboard(WPiece):
         rboard = None
         while True:
             rboard = ChessBoard(debug=True)
             all_added = []
             all_added.append(rboard.add_piece(King(random.randint(0, 7), random.randint(0, 7), Piece.BLACK)))
             all_added.append(rboard.add_piece(King(random.randint(0, 7), random.randint(0, 7), Piece.WHITE)))
-            all_added.append(rboard.add_piece(Rook(random.randint(0, 7), random.randint(0, 7), Piece.WHITE)))
+            all_added.append(rboard.add_piece(WPiece(random.randint(0, 7), random.randint(0, 7), Piece.WHITE)))
 
             if all(all_added):
                 rboard.update_state()
@@ -235,7 +236,7 @@ class ChessBoard:
                     break
         return rboard
 
-    def draw(self):
+    def draw(self, WPiece):
         print('State: ', self.state)
         # print('Round:', self.round)
         print('Player:', "BLACK" if self.turn is Piece.BLACK else "WHITE")
@@ -267,7 +268,7 @@ class ChessBoard:
                             else:
                                 sys.stdout.write('| K ')
 
-                        if type(p) is Rook:
+                        if type(p) is WPiece:
                             if p.color == Piece.BLACK:
                                 sys.stdout.write('| R*')
                             else:
@@ -295,12 +296,14 @@ class ChessBoard:
 
 if __name__ == '__main__':
     # White plays first
-    rw = Rook(2, 7, Piece.WHITE)
+    WPiece = Queen
+
+    rw = WPiece(2, 7, Piece.WHITE)
     kb = King(2, 6, Piece.BLACK)
     kw = King(0, 7, Piece.WHITE)
     board = ChessBoard(kw, rw, kb, white_plays=0,debug=True)
-    print(board.board_id())
-    board.draw()
+    print(board.board_id(WPiece))
+    board.draw(WPiece)
     exit(1)
 
     print(board.play_move(0, 0, board.get_b_king()))
