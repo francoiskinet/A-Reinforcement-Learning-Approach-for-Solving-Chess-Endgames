@@ -11,23 +11,22 @@ class Play:
         self.R = self.load(file_name)
         self.debug = debug
         self.WPiece = WPiece
-        print(self.WPiece)
+        print(f"<from Play.py>: piece class : {self.WPiece}")
 
     def play_stats(self, games_to_play):
         wins = 0
         turns = 0
         for i in range(0, games_to_play):
-            win, turn = self.play(self.WPiece)
+            win, turn = self.play()
             if win:
                 wins += 1
                 turns += turn
 
-        if wins is 0:
+        if wins == 0:
             return 0, 0
         return (wins / games_to_play), (turns / wins)
 
     def play(self, state_id=None):
-
         turn = 0
         win = False
 
@@ -39,7 +38,7 @@ class Play:
         while True:
             board = get_board(current_state_id, self.WPiece)
 
-            if current_state_id[6] is 1:
+            if current_state_id[6] == 1:
                 turn += 1
 
             if turn == 41:
@@ -59,7 +58,7 @@ class Play:
                 break
 
             max_state_id = None
-            if current_state_id[6] is 0:  # If it`s black turn select move with minimal q
+            if current_state_id[6] == 0:  # If it`s black turn select move with minimal q
                 max_state_id = self.get_min_state(next_states)
                 # max_state_id = random.choice(list(next_states.keys()))  # Black can play randomly
             else:  # If it`s black turn select move with maximum q
@@ -67,7 +66,7 @@ class Play:
 
             if self.debug:
                 print('Turn: ', turn)
-                board.draw()
+                board.draw(self.WPiece)
                 for i in next_states:
                     print(i, '->', next_states[i])
                 print('Max:', max_state_id, '->', next_states[max_state_id])
@@ -120,7 +119,7 @@ def get_board(state_id, WPiece):
 
 
 if __name__ == '__main__':
-    p = Play(FILE_PATH + '/memory1-0-KQ_Q_trained_ep1000000_g99_l8_e90.bson', True, Queen)
+    p = Play(FILE_PATH + 'memory1-0-KQ_Q_trained_ep1000000_g99_l8_e90.bson', True, Rook)
     #wins, turns = p.play_stats(1)
     wins, turns = p.play((7,1,6,6,4,5,0))
-    print(wins, turns)
+    print(wins, turns) 

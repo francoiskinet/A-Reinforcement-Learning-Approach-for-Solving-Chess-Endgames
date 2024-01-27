@@ -12,11 +12,11 @@ if __name__ == '__main__':
     gamma = 0.99
     learning_rate = 0.8
 
-    epoch_min = 3500000
+    epoch_min = 2000000
     epoch_max = 5000000
 
     eps_min = 0.1
-    eps_max = 0.1
+    eps_max = 0.2
     
     while eps_min <= eps_max:
 

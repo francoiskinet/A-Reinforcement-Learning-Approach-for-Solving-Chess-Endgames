@@ -3,8 +3,8 @@ from CheesboardKB import ChessBoardKB
 from Pieces import *
 import pickle
 
-FILE_PATH = r"c:/LocalProject/A-Reinforcement-Learning-Approach-for-Solving-Chess-Endgames/resources/"
-
+FILE_PATH = r"E:/LocalProject/A-Reinforcement-Learning-Approach-for-Solving-Chess-Endgames/resources/"
+# FILE_PATH = r"C:/LocalProject/A-Reinforcement-Learning-Approach-for-Solving-Chess-Endgames/resources/"
 class BaseParams:
 
 
@@ -56,14 +56,7 @@ class BoardPossitionParams(BaseParams):
             if not board.valid:
                 continue
 
-            nxt_pos = {}
-            for nxt_moves in board.get_possible_moves():
-                r = -1
-                if nxt_moves.state == ChessBoard.BLACK_KING_CHECKMATE:
-                    r = 1
-                elif nxt_moves.state == ChessBoard.DRAW:
-                    r = 0
-                nxt_pos[nxt_moves.board_id()] = r
+            nxt_pos = self.evaluate_move(board, Rook)
 
             nxt_prms[(wk_r,wk_c,wr_r,wr_c,bk_r,bk_c,white_plays)] = nxt_pos
 
@@ -72,6 +65,17 @@ class BoardPossitionParams(BaseParams):
                 print (count)
 
         return nxt_prms
+
+    def evaluate_move(self, board, WPiece):
+        nxt_pos = {}
+        for nxt_moves in board.get_possible_moves(WPiece):
+            r = -1
+            if nxt_moves.state == ChessBoard.BLACK_KING_CHECKMATE:
+                r = 1
+            elif nxt_moves.state == ChessBoard.DRAW:
+                r = 0
+            nxt_pos[nxt_moves.board_id(WPiece)] = r
+        return nxt_pos
 
     def save(self, parms, filename):
         """
@@ -95,7 +99,7 @@ class BoardPossitionParams(BaseParams):
 class BoardPossitionParamsKQ(BaseParams):
     """
     The purpose of this class is to build and save all the possible states
-    of the chessboard with two kings and a Queen
+    of the chessboard with two kings and a Queen (fki)
     """
     def get_all_params(self):
         params = []
@@ -239,48 +243,7 @@ class BoardPossitionParamsKB(BaseParams):
             return params
 
 
-class BoardPossitionTDParamsKB(BaseParams):
-    """
-    The purpose of this class is to build and save all the possible states
-    of the chessboard with two kings and a rook
-    """
-    def get_all_params(self):
-        params = {}
-        count = 0
-        for wk_r in range(0,8):
-            for wk_c in range(0,8):
-                for wbw_r in range(-1,8):
-                    for wbw_c in range(-1,8):
-                        for wbb_r in range(-1,8):
-                            for wbb_c in range(-1,8):
-                                for bk_r in range(0,8):
-                                    for bk_c in range(0,8):
-                                        for white_plays in range(0,2):
-                                            if(wbw_r == -1 and wbw_c != -1 or wbw_r!=-1 and wbw_c == -1) :
-                                                continue
-                                            if(wbb_r == -1 and wbb_c != -1 or wbb_r!=-1 and wbb_c == -1) :
-                                                continue
-                                            board = ChessBoardKB(wk=King(wk_r, wk_c, Piece.WHITE),
-                                                                 wbw=WhiteBishop(wbw_r, wbw_c, Piece.WHITE),
-                                                                 wbb=BlackBishop(wbb_r, wbb_c, Piece.WHITE),
-                                                                 bk=King(bk_r, bk_c, Piece.BLACK),
-                                                                 white_plays=white_plays)
-                                            if not board.valid:
-                                                continue
 
-                                            r = -1
-                                            if board.state == ChessBoard.BLACK_KING_CHECKMATE:
-                                                r = 1
-                                            elif board.state == ChessBoard.DRAW:
-                                                r = 0
-
-                                            params[(wk_r, wk_c, wbw_r, wbw_c, wbb_r, wbb_c, bk_r, bk_c, white_plays)] = r
-
-                                            count += 1
-                                            if count % 1000 == 0:
-                                                print(count)
-
-        return params
 
     def save(self, parms, filename):
         """
@@ -301,8 +264,24 @@ class BoardPossitionTDParamsKB(BaseParams):
             params = pickle.load(infile)
             return params
 
+
+def check1(WPiece):
+    board = ChessBoard(wk=King(5,6, Piece.WHITE),
+                        wr=WPiece(5, 5, Piece.WHITE),
+                        bk=King(2, 2, Piece.BLACK),
+                        white_plays=1)
+    if not board.valid:
+        print("not ok")
+
+    nxt_pos = BoardPossitionParams().evaluate_move(board, WPiece)
+
+    print(nxt_pos)
+
+
 if __name__ == '__main__':
 
+    check1(Rook)
+    check1(Queen)
 
     # print(BoardPossitionParams().get_all_params())
     # bp = BoardPossitionParams()
@@ -311,6 +290,14 @@ if __name__ == '__main__':
     # bpb = BoardPossitionTDParamsKB()
     # par = bpb.get_all_params()
     # bpb.save(par, FILE_PATH + 'memory1-0-TDBK.bson')
-    bp = BoardPossitionParamsKQ()
-    par = bp.get_possible_nxt_prms()
-    bp.save(par, FILE_PATH + 'memory1-0-KQ.bson')
+  
+    # bp = BoardPossitionParams()
+    # par = bp.get_possible_nxt_prms()
+    # bp.save(par, FILE_PATH + 'memory1-0-Rook.bson')
+    
+    # bp = BoardPossitionParamsKQ()
+    # par = bp.get_possible_nxt_prms()
+    # bp.save(par, FILE_PATH + 'memory1-0-Queen.bson')
+    
+    
+    

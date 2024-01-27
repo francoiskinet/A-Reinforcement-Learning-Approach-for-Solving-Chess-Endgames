@@ -88,7 +88,7 @@ class QLearning:
                 mx = poss_actions[a]
 
         # If min/max not initial was found update Q value
-        if non_zero is True:
+        if non_zero:
             r_curr = self.R[state][next_state]
             self.R[state][next_state] = r_curr + self.learning_rate * (mx * self.gamma - r_curr)
 

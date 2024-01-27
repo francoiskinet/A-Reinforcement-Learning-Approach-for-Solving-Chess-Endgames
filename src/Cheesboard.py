@@ -130,7 +130,7 @@ class ChessBoard:
 
         if piece.move(row, col):
             self.change_turn()
-            self.update_state()
+            self.update_state(WPiece)
 
             return True
 
@@ -172,7 +172,7 @@ class ChessBoard:
                 else:
                     clone_piece = new_board.get_b_king()
 
-                if new_board.play_move(row, col, clone_piece):
+                if new_board.play_move(row, col, clone_piece, WPiece):
                     boards.append(new_board)
 
         return boards
