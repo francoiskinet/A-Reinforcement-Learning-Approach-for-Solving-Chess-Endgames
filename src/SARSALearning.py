@@ -1,5 +1,5 @@
 import random
-from BaseParams import BoardPossitionParams, FILE_PATH
+from BaseParams import BoardPossitionParams, DIRECTORY_PATH
 import time
 
 
@@ -147,7 +147,7 @@ class SARSALearning:
 
 if __name__ == '__main__':
     bp = BoardPossitionParams()
-    q = SARSALearning(bp, gamma=0.99, learning_rate=0.8, epochs=2000000, eps=0.05, name=FILE_PATH + 'memory1-0-SARSA.bson')
+    q = SARSALearning(bp, gamma=0.99, learning_rate=0.8, epochs=2000000, eps=0.05, name=DIRECTORY_PATH + 'memory1-0-SARSA.bson')
 
     last = time.time()
     ttime = q.learning()

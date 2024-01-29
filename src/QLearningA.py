@@ -1,5 +1,5 @@
 import random
-from BaseParams import BoardPossitionParams
+from BaseParams import DIRECTORY_PATH, BoardPossitionParams, BoardPossitionParamsKQ
 import time
 
 
@@ -56,6 +56,7 @@ class QLearningA:
                 # Decrease eps
                 if epochs % 100000 == 0:
                     eps -= self.eps_d
+                    print(epochs)
 
                 # Start new episode
                 continue
@@ -134,8 +135,9 @@ class QLearningA:
 
 
 if __name__ == '__main__':
-    bp = BoardPossitionParams()
-    q = QLearningA(bp, gamma=0.99, learning_rate=0.8, epochs=2000000, eps=1.0, eps_d=0.05, name='res/memory1-0.bson')
+    kings_rook = BoardPossitionParams()
+    kings_queen = BoardPossitionParamsKQ()
+    q = QLearningA(kings_queen, gamma=0.99, learning_rate=0.8,epochs=2000000, eps=1.0, eps_d=0.05, name=DIRECTORY_PATH + 'memory1-0-Queen.bson')
 
     last = time.time()
     ttime = q.learning()

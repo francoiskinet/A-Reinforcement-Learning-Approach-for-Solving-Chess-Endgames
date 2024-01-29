@@ -151,23 +151,24 @@ class Rook(Piece):
             if x != self.col:
                 pos.append((self.row, x))
 
-        for p in pos:
+        if king is not None:
+            for p in pos:
 
-            if p == (king.row, king.col):
-                pos.remove(p)
+                if p == (king.row, king.col):
+                    pos.remove(p)
 
-            if (self.row == king.row and king.col > self.col):
-                if p[1]>king.col:
-                    pos.remove(p)
-            if (self.row == king.row and king.col < self.col):
-                if p[1]<king.col:
-                    pos.remove(p)
-            if (self.col == king.col and king.row > self.row):
-                if p[0]>king.row:
-                    pos.remove(p)
-            if (self.col == king.col and king.row < self.row):
-                if p[0]<king.row:
-                    pos.remove(p)
+                if (self.row == king.row and king.col > self.col):
+                    if p[1]>king.col:
+                        pos.remove(p)
+                if (self.row == king.row and king.col < self.col):
+                    if p[1]<king.col:
+                        pos.remove(p)
+                if (self.col == king.col and king.row > self.row):
+                    if p[0]>king.row:
+                        pos.remove(p)
+                if (self.col == king.col and king.row < self.row):
+                    if p[0]<king.row:
+                        pos.remove(p)
 
         return pos
 

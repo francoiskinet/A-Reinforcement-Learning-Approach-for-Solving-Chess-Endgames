@@ -1,10 +1,12 @@
+from operator import ne
 from Cheesboard import ChessBoard
 from CheesboardKB import ChessBoardKB
 from Pieces import *
 import pickle
+import os
 
-FILE_PATH = r"E:/LocalProject/A-Reinforcement-Learning-Approach-for-Solving-Chess-Endgames/resources/"
-# FILE_PATH = r"C:/LocalProject/A-Reinforcement-Learning-Approach-for-Solving-Chess-Endgames/resources/"
+DIRECTORY_PATH = r"E:/LocalProject/A-Reinforcement-Learning-Approach-for-Solving-Chess-Endgames/resources/"
+
 class BaseParams:
 
 
@@ -131,13 +133,13 @@ class BoardPossitionParamsKQ(BaseParams):
                 continue
 
             nxt_pos = {}
-            for nxt_moves in board.get_possible_moves():
+            for nxt_moves in board.get_possible_moves(Queen):
                 r = -1
                 if nxt_moves.state == ChessBoard.BLACK_KING_CHECKMATE:
                     r = 1
                 elif nxt_moves.state == ChessBoard.DRAW:
                     r = 0
-                nxt_pos[nxt_moves.board_id()] = r
+                nxt_pos[nxt_moves.board_id(Queen)] = r
 
             nxt_prms[(wk_r,wk_c,wq_r,wq_c,bk_r,bk_c,white_plays)] = nxt_pos
 
@@ -266,38 +268,40 @@ class BoardPossitionParamsKB(BaseParams):
 
 
 def check1(WPiece):
-    board = ChessBoard(wk=King(5,6, Piece.WHITE),
-                        wr=WPiece(5, 5, Piece.WHITE),
+    board = ChessBoard(wk=King(5,5, Piece.WHITE),
+                        wr=WPiece(5, 6, Piece.WHITE),
                         bk=King(2, 2, Piece.BLACK),
                         white_plays=1)
     if not board.valid:
         print("not ok")
 
-    nxt_pos = BoardPossitionParams().evaluate_move(board, WPiece)
+    # nxt_pos = BoardPossitionParams().evaluate_move(board, WPiece)
+    moves = board.get_possible_moves(WPiece)
 
-    print(nxt_pos)
+    print(len(moves))
 
 
 if __name__ == '__main__':
 
-    check1(Rook)
-    check1(Queen)
+    # check1(Rook)
+    # check1(Queen)
 
-    # print(BoardPossitionParams().get_all_params())
-    # bp = BoardPossitionParams()
-    # par = bp.get_possible_nxt_prms()
-    # bp.save(par, 'src/res/memory1-0.bson')
-    # bpb = BoardPossitionTDParamsKB()
-    # par = bpb.get_all_params()
-    # bpb.save(par, FILE_PATH + 'memory1-0-TDBK.bson')
-  
-    # bp = BoardPossitionParams()
-    # par = bp.get_possible_nxt_prms()
-    # bp.save(par, FILE_PATH + 'memory1-0-Rook.bson')
-    
-    # bp = BoardPossitionParamsKQ()
-    # par = bp.get_possible_nxt_prms()
-    # bp.save(par, FILE_PATH + 'memory1-0-Queen.bson')
-    
+    new_file = DIRECTORY_PATH + 'memory1-0-Rook.bson'
+    if os.path.isdir(DIRECTORY_PATH):
+        bp = BoardPossitionParams()
+        par = bp.get_possible_nxt_prms()
+        bp.save(par, new_file)
+    else:
+        print(f"Path error: {new_file}")
+
+    # new_file = DIRECTORY_PATH + 'memory1-0-Queen.bson'
+    # if os.path.isdir(DIRECTORY_PATH):
+    #     bp = BoardPossitionParamsKQ()
+    #     par = bp.get_possible_nxt_prms()
+    #     bp.save(par, new_file)
+    # else:
+    #     print(f"Path error: {new_file}")
+
+
     
     

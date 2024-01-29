@@ -3,6 +3,10 @@ from Pieces import King, Rook, Queen, Bishop, Piece
 import random
 import copy
 
+class Brolix:
+    def __init__(self, param1):
+        self.param1 = param1
+
 
 class ChessBoard:
     NOTHING = 'PLAYING'
@@ -19,7 +23,7 @@ class ChessBoard:
         self.state = ChessBoard.NOTHING
         self.debug = debug
         self.valid = True
-        self.wr_class = type(wr)
+        self.type_wpiece = type(wr)
 
         if (wk is None or wr is None or bk is None):
             return
@@ -32,7 +36,7 @@ class ChessBoard:
         all_added.append(self.add_piece(bk))
 
         if all(all_added):
-            self.update_state(self.wr_class)
+            self.update_state(self.type_wpiece)
         else:
             self.valid = False
 
@@ -292,25 +296,27 @@ class ChessBoard:
         sys.stdout.write('\n')
 
 
-# End of class ------
+def check1(WPiece):
+    board = ChessBoard(wk=King(5,5, Piece.WHITE),
+                        wr=WPiece(5, 6, Piece.WHITE),
+                        bk=King(2, 2, Piece.BLACK),
+                        white_plays=1)
+    if not board.valid:
+        print("not ok")
+
+    # nxt_pos = BoardPossitionParams().evaluate_move(board, WPiece)
+    moves = board.get_possible_moves(WPiece)
+
+    print(moves)
+
 
 if __name__ == '__main__':
-    # White plays first
-    WPiece = Queen
 
-    rw = WPiece(2, 7, Piece.WHITE)
-    kb = King(2, 6, Piece.BLACK)
-    kw = King(0, 7, Piece.WHITE)
-    board = ChessBoard(kw, rw, kb, white_plays=0,debug=True)
-    print(board.board_id(WPiece))
-    board.draw(WPiece)
-    exit(1)
+    check1(Rook)
+    check1(Queen)
 
-    print(board.play_move(0, 0, board.get_b_king()))
-    print(board.board_id())
-    board.draw()
 
-    board = ChessBoard.get_random_chessboard()
+    # board = ChessBoard.get_random_chessboard()
 
     # board.add_piece(rw)
     # board.add_piece(kb)

@@ -1,5 +1,5 @@
 import random
-from BaseParams import BoardPossitionParams, BoardPossitionTDParamsKB, BoardPossitionParamsKQ, FILE_PATH
+from BaseParams import BoardPossitionParams, BoardPossitionParamsKQ, DIRECTORY_PATH
 import time
 
 
@@ -45,11 +45,14 @@ class QLearning:
             # if not possible_states or current_state_id in visited_pos:
             if not possible_states:
                 epochs -= 1
+                # if (epochs % 10000) == 0:
+                #     print(epochs)
 
                 # Select new initial state for episode
                 current_state_id = random.choice(self.all_params)
                 visited_pos = []
                 # Start new episode
+
                 continue
 
             if random.random() <= self.eps:
@@ -63,6 +66,7 @@ class QLearning:
             visited_pos.append(current_state_id)
             # Do learning step
             current_state_id = self._cal_learning_step(current_state_id, rnd_action_id)
+
 
         now = time.time()
         return now - last
@@ -125,12 +129,21 @@ class QLearning:
 
 
 if __name__ == '__main__':
-    kings_rook = BoardPossitionParams()
-    kings_bishops = BoardPossitionTDParamsKB()
-    kings_queen = BoardPossitionParamsKQ()
-    q = QLearning(kings_queen, gamma=0.99, learning_rate=0.8, epochs=1000000, eps=0.9, name=FILE_PATH + 'memory1-0-KQ.bson')
+    pieces_setup_rook = BoardPossitionParams()
+    pieces_setup_queen = BoardPossitionParamsKQ()
+    setups, files = [pieces_setup_rook,pieces_setup_queen],['memory1-0-Rook.bson','memory1-0-Queen.bson']
+    learning_rates = [0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9]
+    list_epochs = [2000000,3000000,4000000,5000000,6000000,7000000]
+    gammas = [0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,0.99]
+    epsilons = [0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9]
+    for setup, file in zip(setups, files):
+        for learning_rate in learning_rates:
+            for epoch in list_epochs:
+                for gamma in gammas:
+                    for eps in epsilons:
+                        q = QLearning(setup, gamma=gamma, learning_rate = learning_rate, epochs=epoch, eps=eps, name=DIRECTORY_PATH + file)
 
-    last = time.time()
-    ttime = q.learning()
-    print('Time:', ttime)
-    q.save()
+                        last = time.time()
+                        ttime = q.learning()
+                        print('Time:', ttime)
+                        q.save()

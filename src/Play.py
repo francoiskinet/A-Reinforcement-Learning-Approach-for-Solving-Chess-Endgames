@@ -1,5 +1,5 @@
 import os.path
-from BaseParams import BoardPossitionParams, FILE_PATH
+from BaseParams import BoardPossitionParams, DIRECTORY_PATH
 import pickle
 import random
 from Cheesboard import ChessBoard, King, Rook, Queen, Piece
@@ -119,7 +119,7 @@ def get_board(state_id, WPiece):
 
 
 if __name__ == '__main__':
-    p = Play(FILE_PATH + 'memory1-0-KQ_Q_trained_ep1000000_g99_l8_e90.bson', True, Rook)
+    p = Play(DIRECTORY_PATH + 'memory1-0-KQ_Q_trained_ep1000000_g99_l8_e90.bson', True, Rook)
     #wins, turns = p.play_stats(1)
     wins, turns = p.play((7,1,6,6,4,5,0))
     print(wins, turns) 
