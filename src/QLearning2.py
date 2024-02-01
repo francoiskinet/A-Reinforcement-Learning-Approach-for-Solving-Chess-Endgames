@@ -1,7 +1,8 @@
+from concurrent.futures import ProcessPoolExecutor
 import random
 from BaseParams import BoardPossitionParams, BoardPossitionParamsKQ, DIRECTORY_PATH
 import time
-from multiprocessing import Process
+from multiprocessing import Process, Pool
 
 class QLearning:
     """
@@ -128,21 +129,26 @@ class QLearning:
         self.params.save(self.R, file)
 
 
+def thread(args):
+    setup, file, epoch, learning_rate = args
+    print(f"Start thread:piece = {file.split('.')[0].split('-')[2]} learning rate={learning_rate}, epoch={epoch}")
+    q = QLearning(setup, gamma=0.8, learning_rate = learning_rate, epochs=epoch, eps=0.9, name=DIRECTORY_PATH + file)
+
+    ttime = q.learning()
+    print('Time:', ttime)
+    q.save()
+
 if __name__ == '__main__':
     pieces_setup_rook = BoardPossitionParams()
     pieces_setup_queen = BoardPossitionParamsKQ()
-    setups, files = [pieces_setup_rook,pieces_setup_queen],['memory1-0-Rook.bson','memory1-0-Queen.bson']
+    setups, files = [pieces_setup_rook,pieces_setup_queen], ['memory1-0-Rook.bson','memory1-0-Queen.bson']
     learning_rates = [0.2,0.4,0.6,0.8]
     list_epochs = [1000000,1500000,2000000,2500000,3000000,3500000,4000000,4500000,5000000]
-    # gammas = [0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,]
     # epsilons = [0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9]
     for setup, file in zip(setups, files):
-        for epoch in list_epochs:
-            for l_r in learning_rates:
-                # for eps in epsilons:
-                q = QLearning(setup, gamma=0.8, learning_rate = l_r, epochs=epoch, eps=0.9, name=DIRECTORY_PATH + file)
+        with ProcessPoolExecutor(max_workers=6) as executor:
+            for epoch in list_epochs:
+                for l_r in learning_rates:
+                    arguments = [(setup, file, epoch, l_r)]
+                    executor.map(thread, arguments)
 
-                last = time.time()
-                ttime = q.learning()
-                print('Time:', ttime)
-                q.save()

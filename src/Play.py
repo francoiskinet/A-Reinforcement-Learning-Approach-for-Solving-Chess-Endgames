@@ -11,7 +11,7 @@ class Play:
         self.R = self.load(file_name)
         self.debug = debug
         self.WPiece = WPiece
-        print(f"<from Play.py>: piece class : {self.WPiece}")
+        # print(f"<from Play.py>: piece class : {self.WPiece}")
 
     def play_stats(self, games_to_play):
         wins = 0
