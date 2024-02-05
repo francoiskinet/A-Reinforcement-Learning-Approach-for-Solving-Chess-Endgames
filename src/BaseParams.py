@@ -267,24 +267,10 @@ class BoardPossitionParamsKB(BaseParams):
             return params
 
 
-def check1(WPiece):
-    board = ChessBoard(wk=King(5,5, Piece.WHITE),
-                        wr=WPiece(5, 6, Piece.WHITE),
-                        bk=King(2, 2, Piece.BLACK),
-                        white_plays=1)
-    if not board.valid:
-        print("not ok")
-
-    # nxt_pos = BoardPossitionParams().evaluate_move(board, WPiece)
-    moves = board.get_possible_moves(WPiece)
-
-    print(len(moves))
-
 
 if __name__ == '__main__':
 
-    # check1(Rook)
-    # check1(Queen)
+
 
     new_file = DIRECTORY_PATH + 'memory1-0-Rook.bson'
     if os.path.isdir(DIRECTORY_PATH):

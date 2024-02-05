@@ -3,11 +3,7 @@ import matplotlib.pyplot as plt
 from Play import Play
 from Pieces import Rook, Queen
 from BaseParams import DIRECTORY_PATH
-import json
 
-
-# Queen file 'memory1-0-KQ_Q_trained_ep1000000_g99_l8_e90.bson'
-# Rook file 'memory1-0_Q_trained_ep1000000_g99_l8_e90.bson'
 
 
 
@@ -15,12 +11,6 @@ def export_dict(dictionnaire, nom_de_fichier, mode = 'a'):
     with open(nom_de_fichier, mode) as fichier:
         for cle, valeur in dictionnaire.items():
             fichier.write(f'{cle}: {valeur}\n')
-
-
-
-def write_result(dict, filename):
-    with open(filename, 'w', newline='', ) as jsonfile:
-        json.dump(dict, jsonfile, indent=4, sort_keys=False)
 
 
 
@@ -43,12 +33,12 @@ if __name__ == '__main__':
     games_to_play = 10000
     pieces = [Rook,Queen]
     list_epochs = [1000000,1500000,2000000,2500000,3000000,3500000,4000000,4500000,5000000]
+    epsilons = [0.2,0.4,0.6,0.8]
     gamma = 0.8
     learning_rates = 0.8
-    epsilons = [0.2,0.4,0.6,0.8]
     future_list = []
     for piece in pieces:
-        with ProcessPoolExecutor(max_workers=12) as executor:
+        with ProcessPoolExecutor(max_workers=6) as executor:
             for eps in epsilons:
                 for epoch in list_epochs:
                     arguments = (base_memory, games_to_play, learning_rates, eps, piece, gamma, epoch, eps) #last argument is the parameter we are sweeping on 

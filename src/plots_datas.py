@@ -17,14 +17,14 @@ def import_dict(nom_de_fichier):
 
 
 if __name__ == '__main__':
-    parameter = 'learning rate'
-    filename = 'win_rate_Rook_lr02_to_08_ep_1_to_5.txt'
+    parameter = 'epsilon'
+    filename = 'win_rate_Rook_eps02_to_08_ep_1_to_5.txt'
     dict_datas = import_dict(filename)
     game_played = dict_datas.pop("game_played")
     piece = dict_datas.pop("piece")
     figure_title = f"Win percentage of a {piece} in {game_played} games \n versus epochs for different {parameter}"
     figure_name =  f'win_rate_{piece}_{parameter}_vs_epoch.png'
-    labels = "learning rate ="
+    labels = "$\epsilon$ ="
     
     
     new_dict = {}

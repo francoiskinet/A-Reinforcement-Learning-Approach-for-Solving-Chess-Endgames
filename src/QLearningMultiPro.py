@@ -130,9 +130,9 @@ class QLearning:
 
 
 def thread(args):
-    setup, file, epoch, learning_rate = args
-    print(f"Start thread:piece = {file.split('.')[0].split('-')[2]} learning rate={learning_rate}, epoch={epoch}")
-    q = QLearning(setup, gamma=0.8, learning_rate = learning_rate, epochs=epoch, eps=0.9, name=DIRECTORY_PATH + file)
+    setup, file, epoch, eps = args
+    print(f"Start thread:piece = {file.split('.')[0].split('-')[2]} epsilon={eps}, epoch={epoch}")
+    q = QLearning(setup, gamma=0.8, learning_rate = 0.8, epochs=epoch, eps=eps, name=DIRECTORY_PATH + file)
 
     ttime = q.learning()
     print('Time:', ttime)
@@ -142,13 +142,12 @@ if __name__ == '__main__':
     pieces_setup_rook = BoardPossitionParams()
     pieces_setup_queen = BoardPossitionParamsKQ()
     setups, files = [pieces_setup_rook,pieces_setup_queen], ['memory1-0-Rook.bson','memory1-0-Queen.bson']
-    learning_rates = [0.2,0.4,0.6,0.8]
+    epsilons = [0.2,0.4,0.6,0.8]
     list_epochs = [1000000,1500000,2000000,2500000,3000000,3500000,4000000,4500000,5000000]
-    # epsilons = [0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9]
     for setup, file in zip(setups, files):
         with ProcessPoolExecutor(max_workers=6) as executor:
             for epoch in list_epochs:
-                for l_r in learning_rates:
-                    arguments = [(setup, file, epoch, l_r)]
+                for eps in epsilons:
+                    arguments = [(setup, file, epoch, eps)]
                     executor.map(thread, arguments)
 
